@@ -1,9 +1,19 @@
 import sendEmail from '../sendEmail';
 
 export default async function handler(req, res) {
-    if (req.method === 'POST' || req.method === 'GET') { // Adicionei suporte ao método GET também
+    // Adicionando cabeçalhos CORS
+    res.setHeader('Access-Control-Allow-Origin', '*'); // Permite todos os domínios (ou substitua '*' por um domínio específico)
+    res.setHeader('Access-Control-Allow-Methods', 'POST, GET, OPTIONS'); // Métodos permitidos
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type'); // Cabeçalhos permitidos
+
+    // Responder ao preflight OPTIONS request
+    if (req.method === 'OPTIONS') {
+        res.status(200).end();
+        return;
+    }
+
+    if (req.method === 'POST' || req.method === 'GET') {
         try {
-            // Capturando parâmetros dos query params
             const {
                 recipientEmail,
                 postalCode,
@@ -16,25 +26,10 @@ export default async function handler(req, res) {
                 cityUF,
             } = req.query;
 
-            // Verificação básica dos parâmetros
             if (!recipientEmail) {
                 return res.status(400).json({ message: 'Recipient email is required' });
             }
 
-            // Debugging: Log dos parâmetros recebidos
-            console.log('Parameters received:', {
-                recipientEmail,
-                postalCode,
-                createdAt,
-                number,
-                district,
-                transactionId,
-                givenName,
-                amount,
-                cityUF,
-            });
-
-            // Chamada à função para enviar o email
             await sendEmail({
                 recipientEmail,
                 postalCode,
