@@ -26,8 +26,7 @@ async function sendEmail({
     cityUF,
 }) {
     try {
-        console.log(`Attempting to send email to ${recipientEmail}`);
-
+        console.log(`Received streetAddress: ${streetAddress}`);
         // Carregar o arquivo HTML e substituir os placeholders
         let htmlBody = fs.readFileSync(path.join(__dirname, 'emailTemplate.html'), 'utf8');
 
