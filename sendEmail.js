@@ -17,6 +17,7 @@ async function sendEmail({
     recipientEmail,
     postalCode,
     createdAt,
+    streetAddress,
     number,
     district,
     transactionId,
@@ -34,7 +35,7 @@ async function sendEmail({
         htmlBody = htmlBody.replace('Oct 21, 2017', createdAt);
         htmlBody = htmlBody.replace('$80.67', amount);
         htmlBody = htmlBody.replace('Andry Petrin', givenName);
-        htmlBody = htmlBody.replace('78 Somewhere St', number);
+        htmlBody = htmlBody.replace('78 Somewhere St', `${streetAddress}, ${number}`);
         htmlBody = htmlBody.replace('Somewhere, Canada 99743', `${district}, ${cityUF} ${postalCode}`);
 
         const transporter = nodemailer.createTransport({
@@ -102,5 +103,6 @@ async function sendEmail({
         console.error('Error sending email:', error);
     }
 }
+
 
 module.exports = sendEmail;
