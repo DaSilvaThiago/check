@@ -2,7 +2,8 @@ import sendEmail from '../sendEmail';
 
 export default async function handler(req, res) {
     if (req.method === 'POST') {
-        const { recipientEmail } = req.body;  // Acessando req.body diretamente
+        // Verifique primeiro o corpo da requisição e depois os parâmetros de consulta
+        const recipientEmail = req.body.recipientEmail || req.query.recipientEmail;
 
         if (!recipientEmail) {
             return res.status(400).json({ message: 'Recipient email is required' });
