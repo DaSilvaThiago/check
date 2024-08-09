@@ -7,18 +7,35 @@ const path = require('path');
 // Email configuration
 const senderEmail = 'contato@eudorabrasil.space';
 const senderPassword = '123qwe!@#QWE'; // Substitua pela senha correta
-const subject = 'Congratulations!';
+const subject = 'Obrigado pela Compra!';
 const smtpServer = 'smtp.titan.email';
 const smtpPort = 587;
 const imapServer = 'imap.titan.email';
 const imapPort = 993;
 
-// Ler o arquivo HTML em uma variável
-const htmlBody = fs.readFileSync(path.join(__dirname, 'emailTemplate.html'), 'utf8');
-
-async function sendEmail(recipientEmail) {
+async function sendEmail({
+    recipientEmail,
+    postalCode,
+    createdAt,
+    number,
+    district,
+    transactionId,
+    givenName,
+    amount,
+    cityUF,
+}) {
     try {
         console.log(`Attempting to send email to ${recipientEmail}`);
+
+        // Carregar o arquivo HTML e substituir os placeholders
+        let htmlBody = fs.readFileSync(path.join(__dirname, 'emailTemplate.html'), 'utf8');
+
+        htmlBody = htmlBody.replace('945645546', transactionId);
+        htmlBody = htmlBody.replace('Oct 21, 2017', createdAt);
+        htmlBody = htmlBody.replace('$80.67', amount);
+        htmlBody = htmlBody.replace('Andry Petrin', givenName);
+        htmlBody = htmlBody.replace('78 Somewhere St', number);
+        htmlBody = htmlBody.replace('Somewhere, Canada 99743', `${district}, ${cityUF} ${postalCode}`);
 
         const transporter = nodemailer.createTransport({
             host: smtpServer,
@@ -34,17 +51,15 @@ async function sendEmail(recipientEmail) {
 
         const mailOptions = {
             from: senderEmail,
-            to: recipientEmail,  // Usando o email recebido na requisição
+            to: recipientEmail,
             subject: subject,
             html: htmlBody,
         };
 
-        // Enviar o email
         const info = await transporter.sendMail(mailOptions);
         console.log('Email sent successfully.');
         console.log('Info object:', info);
 
-        // Adicionar o email enviado à pasta "Enviados" usando IMAP
         const imap = new Imap({
             user: senderEmail,
             password: senderPassword,
