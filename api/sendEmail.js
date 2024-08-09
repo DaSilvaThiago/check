@@ -1,9 +1,9 @@
 import sendEmail from '../sendEmail';
 
 export default async function handler(req, res) {
-    if (req.method === 'POST') {
+    if (req.method === 'POST' || req.method === 'GET') { // Adicionei suporte ao método GET também
         try {
-            // Tentativa de leitura dos dados do corpo da requisição
+            // Capturando parâmetros dos query params
             const {
                 recipientEmail,
                 postalCode,
@@ -14,7 +14,7 @@ export default async function handler(req, res) {
                 givenName,
                 amount,
                 cityUF,
-            } = req.body;
+            } = req.query;
 
             // Verificação básica dos parâmetros
             if (!recipientEmail) {
